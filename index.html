@@ -3,92 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Reset total para evitar que iLovePDF adivine márgenes */
+        /* Reset para ocupar todo el espacio del conversor */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         @page { size: A4; margin: 0; }
 
         html, body { 
-            width: 210mm; 
-            height: 297mm; 
+            width: 100%; 
+            height: 100%; 
             background: #ffffff; 
-            overflow: hidden; /* Evita estrictamente la página 2 */
+            overflow: hidden; 
+            font-family: Arial, sans-serif;
         }
 
-        /* Contenedor principal que simula la hoja física */
-        .page {
-            width: 210mm;
-            height: 297mm;
-            padding: 15mm; /* Margen interno de seguridad para la impresora */
+        /* El contenedor ocupa el 100% del ancho del 'navegador' de iLovePDF */
+        .page-container {
+            width: 100vw; 
+            height: 100vh;
+            padding: 40px; /* Margen estético para que no toque los bordes físicos */
             display: flex;
             flex-direction: column;
-            font-family: 'Helvetica', 'Arial', sans-serif;
         }
 
         h1 { 
-            font-size: 24pt; 
-            border-bottom: 3px solid #000; 
-            padding-bottom: 5mm;
-            margin-bottom: 5mm;
+            font-size: 28pt; /* Aumentamos tamaño para que se vea profesional */
+            border-bottom: 4px solid #000; 
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .meta { 
-            font-size: 12pt; 
-            margin-bottom: 15mm; 
-        }
+        .meta-info { font-size: 14pt; margin-bottom: 40px; }
 
-        /* Fila de producto optimizada para no cortarse */
-        .item {
+        .item-list { flex-grow: 1; }
+
+        .row {
             font-family: 'Courier New', monospace;
-            font-size: 13pt;
-            padding: 8pt 0;
-            border-bottom: 0.5pt solid #eee;
+            font-size: 16pt; /* Fuente más grande para lectura fácil en depósito */
+            padding: 12px 0;
+            border-bottom: 1px solid #ddd;
             width: 100%;
-            white-space: nowrap; /* Impide que el texto baje a la siguiente línea */
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         .footer {
-            margin-top: auto; /* Empuja el pie al final de la hoja */
-            border-top: 1pt solid #000;
-            padding-top: 5mm;
-            font-size: 10pt;
+            border-top: 2px solid #000;
+            padding-top: 15px;
+            font-size: 12pt;
             text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="page">
+    <div class="page-container">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div class="meta">
-            <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span> [cite: 82]
+        <div class="meta-info">
+            <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
         </div>
 
-        <div id="lista-contenedora">
-            </div>
+        <div id="items" class="item-list"></div>
 
         <div class="footer">
-            LG Amoblamientos - Reporte Automático de Salida 
+            LG Amoblamientos - Reporte Automático de Salida
         </div>
     </div>
 
     <script>
-        // Fecha en formato local Uruguay [cite: 82]
         document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
-        
-        const params = new URLSearchParams(window.location.search);
-        const data = params.get('data');
-        const contenedor = document.getElementById('lista-contenedora');
+        const urlParams = new URLSearchParams(window.location.search);
+        const dataStr = urlParams.get('data');
+        const list = document.getElementById('items');
 
-        if (data) {
-            const pedidos = decodeURIComponent(data).split(',');
-            pedidos.forEach(p => {
-                if(p.trim() !== "") {
+        if (dataStr) {
+            const lines = decodeURIComponent(dataStr).split(',');
+            lines.forEach(line => {
+                if(line.trim()){
                     const div = document.createElement('div');
-                    div.className = 'item';
-                    div.textContent = p.trim();
-                    contenedor.appendChild(div);
+                    div.className = 'row';
+                    div.textContent = line.trim();
+                    list.appendChild(div);
                 }
             });
         }
