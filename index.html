@@ -2,26 +2,33 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        /* Reset total */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        @page { size: A4; margin: 0; }
-
-        body { 
-            width: 794px; /* Ancho exacto de A4 en píxeles de pantalla */
-            background: #fff;
-            font-family: Arial, sans-serif;
-            /* El hack definitivo: reducimos la escala visual para que iLovePDF no "agite" el layout */
-            zoom: 0.95; 
+        /* Reset agresivo: eliminamos cualquier interpretación del navegador */
+        html, body { 
+            margin: 0 !important; 
+            padding: 0 !important; 
+            width: 210mm; 
+            height: 297mm;
+            overflow: hidden;
+            background-color: white;
         }
 
-        .hoja-imprimible {
-            width: 794px;
-            padding: 40px;
-            min-height: 1122px; /* Altura exacta A4 */
-            position: relative;
+        @page { 
+            size: A4; 
+            margin: 0; 
+        }
+
+        /* Contenedor posicionado quirúrgicamente en el 0,0 de la hoja */
+        .wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 210mm;
+            height: 297mm;
+            padding: 15mm; /* El margen lo manejamos nosotros por dentro */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
         }
 
         .header {
@@ -30,39 +37,35 @@
             margin-bottom: 20px;
         }
 
-        h1 { font-size: 22pt; font-weight: bold; }
+        h1 { font-size: 24pt; font-family: Arial, sans-serif; font-weight: bold; }
 
-        /* Estructura de lista ultra-limpia */
         ul { list-style: none; width: 100%; }
 
         li {
             font-family: 'Courier New', monospace;
-            font-size: 13pt; /* Bajamos el tamaño: antes estaba muy grande */
+            font-size: 14pt;
             font-weight: bold;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #eee;
-            width: 100%;
-            display: block;
         }
 
         .footer {
-            position: absolute;
-            bottom: 40px;
-            width: calc(100% - 80px);
+            margin-top: auto; /* Empuja al final */
             border-top: 1px solid #000;
             padding-top: 10px;
             text-align: center;
+            font-family: Arial, sans-serif;
             font-size: 10pt;
         }
     </style>
 </head>
 <body>
-    <div class="hoja-imprimible">
+    <div class="wrapper">
         <div class="header">
             <h1>RETIROS SAN JOSÉ</h1>
         </div>
 
-        <div id="content">
+        <div id="main-content">
             </div>
 
         <div class="footer">
@@ -74,7 +77,7 @@
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
-            document.getElementById('content').innerHTML = decodeURIComponent(data);
+            document.getElementById('main-content').innerHTML = decodeURIComponent(data);
         }
     </script>
 </body>
