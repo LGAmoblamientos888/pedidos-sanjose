@@ -3,58 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Forzamos medidas físicas que iLovePDF entienda sin errores */
-        @page { size: A4; margin: 0; }
-        html, body { 
+        @page { size: A4; margin: 10mm; }
+        body { 
+            font-family: Arial, sans-serif; 
             margin: 0; 
             padding: 0; 
-            background: #ffffff; 
-            width: 210mm; 
-            height: 296mm; /* Un mm menos para evitar la 2da hoja */
-            overflow: hidden; 
+            background-color: #ffffff;
+            color: #000;
         }
-        .sheet {
-            padding: 15mm;
-            box-sizing: border-box;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+        .container { width: 100%; max-width: 190mm; margin: auto; }
+        
         h1 { 
-            font-family: Arial, sans-serif; 
-            font-size: 22pt; 
+            font-size: 18pt; 
             margin: 0; 
-            border-bottom: 3px solid #000; 
+            border-bottom: 2px solid #000;
+            padding-bottom: 5px;
         }
-        .info { 
-            font-family: Arial, sans-serif; 
-            font-size: 10pt; 
-            margin: 5pt 0 20pt 0; 
-        }
-        .item { 
-            font-family: 'Courier New', monospace; /* Fuente tipo factura, muy legible */
-            font-size: 12pt; 
+        .header-info { font-size: 10pt; margin: 5px 0 20px 0; }
+
+        /* Usamos una tabla para evitar que los items se partan en dos líneas */
+        table { width: 100%; border-collapse: collapse; }
+        td { 
             padding: 8pt 0; 
             border-bottom: 1px solid #000; 
+            font-size: 11pt; 
+            font-family: 'Courier New', monospace;
+            vertical-align: middle;
         }
+        /* Esto evita que el texto se parta si la hoja parece "angosta" */
+        .no-wrap { white-space: nowrap; }
+
         .footer { 
-            margin-top: auto; 
-            font-family: Arial, sans-serif; 
+            margin-top: 30px; 
             font-size: 9pt; 
             border-top: 1px solid #000; 
-            padding-top: 5pt; 
+            padding-top: 5px; 
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="sheet">
+    <div class="container">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div class="info">
+        <div class="header-info">
             <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
         </div>
 
-        <div id="lista-contenedora">
-            </div>
+        <table>
+            <tbody id="lista-contenedora">
+                </tbody>
+        </table>
 
         <div class="footer">
             LG Amoblamientos - Reporte Automático de Salida
@@ -71,10 +69,12 @@
             contenedor.innerHTML = "";
             const pedidos = decodeURIComponent(data).split(',');
             pedidos.forEach(p => {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = p.trim();
-                contenedor.appendChild(div);
+                const tr = document.createElement('tr');
+                const td = document.createElement('td');
+                td.className = "no-wrap";
+                td.textContent = p.trim();
+                tr.appendChild(td);
+                contenedor.appendChild(tr);
             });
         }
     </script>
