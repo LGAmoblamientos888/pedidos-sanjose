@@ -3,74 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Reset para evitar escalas automáticas de iLovePDF */
+        /* Eliminamos cualquier margen elástico */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        @page { size: A4; margin: 0; }
-
-        body { 
-            width: 794px; /* Ancho real A4 */
-            font-family: 'Helvetica', Arial, sans-serif;
-            background: #ffffff;
-            color: #000;
-            line-height: 1.2;
+        @page { 
+            size: A4; 
+            margin: 0; 
         }
 
-        .container {
-            width: 794px;
-            padding: 50px;
-            min-height: 1122px;
+        body { 
+            width: 210mm; 
+            height: 297mm; 
+            background: #ffffff; 
+            font-family: 'Helvetica', Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* EL MARCO: Este recuadro le dice a iLovePDF exactamente dónde termina la hoja */
+        .border-frame {
+            width: 200mm;
+            height: 287mm;
+            border: 2px solid #000; /* Marco estructural */
+            margin: 5mm;
+            padding: 10mm;
             display: flex;
             flex-direction: column;
+            background: #fff;
         }
 
         .header {
             border-bottom: 4px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
+            padding-bottom: 10mm;
+            margin-bottom: 10mm;
             display: flex;
             justify-content: space-between;
-            align-items: flex-end;
+            align-items: baseline;
         }
 
-        h1 { font-size: 28pt; font-weight: 900; }
-        .date { font-size: 14pt; color: #444; }
+        h1 { font-size: 28pt; font-weight: 900; letter-spacing: -1px; }
+        .date-box { font-size: 14pt; font-weight: bold; }
 
-        /* Lista de pedidos sin recuadros grises */
-        .pedido-row {
+        /* Lista de items */
+        .content { flex-grow: 1; }
+
+        .item-row {
             display: block;
             width: 100%;
-            padding: 12pt 0;
-            border-bottom: 1px solid #000; /* Línea fina divisoria */
+            padding: 10pt 0;
+            border-bottom: 1px solid #ddd;
             font-family: 'Courier New', monospace;
-            font-size: 16pt;
+            font-size: 15pt;
             font-weight: bold;
             color: #000;
         }
 
         .footer {
-            margin-top: auto;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            border-top: 2px solid #000;
+            padding-top: 5mm;
             text-align: center;
             font-size: 10pt;
-            color: #aaa;
-            letter-spacing: 1px;
+            font-weight: bold;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="border-frame">
         <div class="header">
             <h1>RETIROS SAN JOSÉ</h1>
-            <div class="date"><span id="current-date"></span></div>
+            <div class="date-box" id="current-date"></div>
         </div>
 
-        <div id="lista-contenedora">
+        <div class="content" id="lista-pedidos">
             </div>
 
         <div class="footer">
-            LG AMOBLAMIENTOS - SISTEMA DE CONTROL LOGÍSTICO
+            LG AMOBLAMIENTOS - CONTROL DE LOGÍSTICA
         </div>
     </div>
 
@@ -80,15 +90,15 @@
         const params = new URLSearchParams(window.location.search);
         const dataRaw = params.get('data') || "";
         
-        // Separamos por coma, punto y coma o lo que venga de Make
+        // Separamos por coma o punto y coma
         const items = decodeURIComponent(dataRaw).split(/[,;]+/);
-        const contenedor = document.getElementById('lista-contenedora');
+        const contenedor = document.getElementById('lista-pedidos');
 
         items.forEach(item => {
             const texto = item.trim();
             if (texto.length > 2) {
                 const div = document.createElement('div');
-                div.className = 'pedido-row';
+                div.className = 'item-row';
                 div.textContent = texto;
                 contenedor.appendChild(div);
             }
