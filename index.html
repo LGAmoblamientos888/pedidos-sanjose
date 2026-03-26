@@ -1,72 +1,77 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Eliminamos cualquier margen que iLovePDF quiera inventar */
+        /* Eliminamos CUALQUIER espacio que iLovePDF quiera meter por defecto */
         html, body { 
-            margin: 0; 
-            padding: 0; 
-            background: #fff;
+            margin: 0 !important; 
+            padding: 0 !important; 
+            width: 794px; 
+            height: 1123px;
+            overflow: hidden; /* Prohibido crear segunda página */
+            background-color: #fff;
         }
 
-        /* Forzamos que la tabla sea el único contenedor */
-        #tabla-pdf {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: Arial, sans-serif;
+        /* El contenedor que fuerza el inicio en el pixel 0,0 */
+        .a4-container {
+            width: 794px;
+            height: 1123px;
+            padding: 30px; /* Margen interno nuestro */
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
         }
 
-        /* El encabezado es una fila de la tabla para que no se mueva */
-        .header-cell {
-            padding: 40px 40px 20px 40px;
-            border-bottom: 4px solid #000;
+        h1 { 
+            font-family: Arial, sans-serif; 
+            font-size: 24pt; 
+            margin-bottom: 5px; 
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
         }
 
-        h1 { font-size: 24pt; margin: 0; }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 10px;
+        }
 
-        /* Cada factura es una fila con padding interno */
         td {
-            padding: 12px 40px;
             font-family: 'Courier New', monospace;
-            font-size: 16pt;
+            font-size: 14pt;
             font-weight: bold;
-            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            border-bottom: 1px solid #ddd;
+            color: #000;
         }
 
-        .footer-cell {
-            padding: 20px;
+        .footer {
+            margin-top: auto; /* Empuja al fondo de la hoja */
             text-align: center;
+            font-family: Arial, sans-serif;
             font-size: 10pt;
-            color: #999;
+            border-top: 1px solid #000;
+            padding-top: 10px;
         }
     </style>
 </head>
 <body>
-    <div id="wrapper">
-        <table id="tabla-pdf">
-            <thead>
-                <tr>
-                    <th class="header-cell" align="left">
-                        <h1>RETIROS SAN JOSÉ</h1>
-                    </th>
-                </tr>
-            </thead>
-            <tbody id="render-target">
-                </tbody>
-            <tfoot>
-                <tr>
-                    <td class="footer-cell">LG Amoblamientos - Gestión Logística</td>
-                </tr>
-            </tfoot>
-        </table>
+    <div class="a4-container">
+        <h1>RETIROS SAN JOSÉ</h1>
+        
+        <div id="render-target">
+            </div>
+
+        <div class="footer">
+            LG AMOBLAMIENTOS - DEPÓSITO
+        </div>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
-            // Inyectamos directamente en el tbody
             document.getElementById('render-target').innerHTML = decodeURIComponent(data);
         }
     </script>
