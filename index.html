@@ -3,60 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body, html { 
-            margin: 0; 
-            padding: 0; 
+        /* 1. Reset total para eliminar márgenes del navegador */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @page { size: A4; margin: 0; }
+
+        html, body { 
             background: #ffffff; 
+            width: 210mm; 
+            height: 297mm; 
+            overflow: hidden; /* Prohíbe el scroll y la creación de 2da página */
         }
-        /* Contenedor rígido con medidas A4 en píxeles */
-        .hoja-a4 {
-            width: 794px; 
-            height: 1122px; 
-            padding: 40px;
-            box-sizing: border-box;
-            position: relative; /* Clave para anclar el pie de página */
+
+        /* 2. Contenedor con 'Safe Area' (Área segura de impresión) */
+        .page-wrapper {
+            width: 210mm;
+            height: 296mm; /* 1mm menos para margen de error */
+            padding: 15mm;
+            display: flex;
+            flex-direction: column;
             font-family: Arial, sans-serif;
-            color: #000;
+            position: relative;
         }
+
         h1 { 
-            font-size: 24px; 
-            border-bottom: 2px solid #000; 
-            margin: 0 0 10px 0; 
-            padding-bottom: 5px; 
+            font-size: 22pt; 
+            border-bottom: 3px solid #000; 
+            margin-bottom: 5pt; 
         }
-        .header-info { 
-            font-size: 14px; 
-            margin-bottom: 30px; 
-        }
-        /* Volvemos a divs simples pero forzamos que no se partan */
-        .fila {
+        .header-info { font-size: 11pt; margin-bottom: 25pt; }
+
+        /* 3. Estilo de fila ultra-limpio */
+        .item-row {
             font-family: 'Courier New', monospace;
-            font-size: 15px;
-            padding: 10px 0;
-            border-bottom: 1px solid #000;
-            white-space: nowrap; 
-            overflow: hidden;
+            font-size: 13pt;
+            padding: 10pt 0;
+            border-bottom: 1pt solid #000;
+            width: 100%;
+            display: block;
         }
+
+        /* 4. Pie de página anclado estrictamente */
         .footer {
             position: absolute;
-            bottom: 40px;
-            left: 40px;
-            right: 40px;
-            font-size: 12px;
+            bottom: 15mm;
+            left: 15mm;
+            right: 15mm;
+            font-size: 10pt;
             border-top: 1px solid #000;
-            padding-top: 10px;
+            padding-top: 5pt;
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="hoja-a4">
+    <div class="page-wrapper">
         <h1>RETIROS SAN JOSÉ</h1>
         <div class="header-info">
             <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
         </div>
 
-        <div id="lista-contenedora"></div>
+        <div id="lista-pedidos">
+            </div>
 
         <div class="footer">
             LG Amoblamientos - Reporte Automático de Salida
@@ -65,17 +73,17 @@
 
     <script>
         document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
-        const params = new URLSearchParams(window.location.search);
-        const data = params.get('data');
-        const contenedor = document.getElementById('lista-contenedora');
+        const urlParams = new URLSearchParams(window.location.search);
+        const rawData = urlParams.get('data');
+        const contenedor = document.getElementById('lista-pedidos');
 
-        if (data) {
-            contenedor.innerHTML = "";
-            const pedidos = decodeURIComponent(data).split(',');
-            pedidos.forEach(p => {
+        if (rawData) {
+            const items = decodeURIComponent(rawData).split(',');
+            // Limitamos a los primeros 15-18 items para que no desborden la A4
+            items.forEach(item => {
                 const div = document.createElement('div');
-                div.className = 'fila';
-                div.textContent = p.trim();
+                div.className = 'item-row';
+                div.textContent = item.trim();
                 contenedor.appendChild(div);
             });
         }
