@@ -3,56 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        @page { size: A4; margin: 10mm; }
-        body { 
-            font-family: Arial, sans-serif; 
+        body, html { 
             margin: 0; 
             padding: 0; 
-            background-color: #ffffff;
+            background: #ffffff; 
+        }
+        /* Contenedor rígido con medidas A4 en píxeles */
+        .hoja-a4 {
+            width: 794px; 
+            height: 1122px; 
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative; /* Clave para anclar el pie de página */
+            font-family: Arial, sans-serif;
             color: #000;
         }
-        .container { width: 100%; max-width: 190mm; margin: auto; }
-        
         h1 { 
-            font-size: 18pt; 
-            margin: 0; 
-            border-bottom: 2px solid #000;
-            padding-bottom: 5px;
+            font-size: 24px; 
+            border-bottom: 2px solid #000; 
+            margin: 0 0 10px 0; 
+            padding-bottom: 5px; 
         }
-        .header-info { font-size: 10pt; margin: 5px 0 20px 0; }
-
-        /* Usamos una tabla para evitar que los items se partan en dos líneas */
-        table { width: 100%; border-collapse: collapse; }
-        td { 
-            padding: 8pt 0; 
-            border-bottom: 1px solid #000; 
-            font-size: 11pt; 
+        .header-info { 
+            font-size: 14px; 
+            margin-bottom: 30px; 
+        }
+        /* Volvemos a divs simples pero forzamos que no se partan */
+        .fila {
             font-family: 'Courier New', monospace;
-            vertical-align: middle;
+            font-size: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #000;
+            white-space: nowrap; 
+            overflow: hidden;
         }
-        /* Esto evita que el texto se parta si la hoja parece "angosta" */
-        .no-wrap { white-space: nowrap; }
-
-        .footer { 
-            margin-top: 30px; 
-            font-size: 9pt; 
-            border-top: 1px solid #000; 
-            padding-top: 5px; 
+        .footer {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            right: 40px;
+            font-size: 12px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
             text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="hoja-a4">
         <h1>RETIROS SAN JOSÉ</h1>
         <div class="header-info">
             <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
         </div>
 
-        <table>
-            <tbody id="lista-contenedora">
-                </tbody>
-        </table>
+        <div id="lista-contenedora"></div>
 
         <div class="footer">
             LG Amoblamientos - Reporte Automático de Salida
@@ -69,12 +73,10 @@
             contenedor.innerHTML = "";
             const pedidos = decodeURIComponent(data).split(',');
             pedidos.forEach(p => {
-                const tr = document.createElement('tr');
-                const td = document.createElement('td');
-                td.className = "no-wrap";
-                td.textContent = p.trim();
-                tr.appendChild(td);
-                contenedor.appendChild(tr);
+                const div = document.createElement('div');
+                div.className = 'fila';
+                div.textContent = p.trim();
+                contenedor.appendChild(div);
             });
         }
     </script>
