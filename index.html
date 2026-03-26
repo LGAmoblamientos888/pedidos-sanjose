@@ -3,54 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <style>
+        /* Reset para evitar escalas automáticas de iLovePDF */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         @page { size: A4; margin: 0; }
 
         body { 
-            width: 794px; /* Ancho exacto A4 */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            width: 794px; /* Ancho real A4 */
+            font-family: 'Helvetica', Arial, sans-serif;
             background: #ffffff;
-            color: #333;
+            color: #000;
+            line-height: 1.2;
         }
 
         .container {
             width: 794px;
-            padding: 40px;
+            padding: 50px;
             min-height: 1122px;
             display: flex;
             flex-direction: column;
         }
 
         .header {
-            border-bottom: 5px solid #000;
-            padding-bottom: 20px;
+            border-bottom: 4px solid #000;
+            padding-bottom: 15px;
             margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
         }
 
-        h1 { font-size: 32px; color: #000; text-transform: uppercase; }
-        .date { font-size: 18px; margin-top: 5px; color: #666; }
+        h1 { font-size: 28pt; font-weight: 900; }
+        .date { font-size: 14pt; color: #444; }
 
-        /* CADA ITEM ES UN BLOQUE RÍGIDO */
-        .pedido-card {
+        /* Lista de pedidos sin recuadros grises */
+        .pedido-row {
             display: block;
             width: 100%;
-            background: #f9f9f9;
-            margin-bottom: 10px;
-            padding: 15px 20px;
-            border-left: 8px solid #000;
+            padding: 12pt 0;
+            border-bottom: 1px solid #000; /* Línea fina divisoria */
             font-family: 'Courier New', monospace;
-            font-size: 20px;
+            font-size: 16pt;
             font-weight: bold;
-            page-break-inside: avoid; /* Evita que un pedido se parta entre dos hojas */
+            color: #000;
         }
 
         .footer {
             margin-top: auto;
-            border-top: 2px solid #ccc;
-            padding-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
             text-align: center;
-            font-size: 14px;
-            color: #999;
+            font-size: 10pt;
+            color: #aaa;
+            letter-spacing: 1px;
         }
     </style>
 </head>
@@ -58,13 +63,14 @@
     <div class="container">
         <div class="header">
             <h1>RETIROS SAN JOSÉ</h1>
-            <div class="date">Logística | <span id="current-date"></span></div>
+            <div class="date"><span id="current-date"></span></div>
         </div>
 
-        <div id="lista-pedidos"></div>
+        <div id="lista-contenedora">
+            </div>
 
         <div class="footer">
-            LG Amoblamientos - Documento de Control de Depósito
+            LG AMOBLAMIENTOS - SISTEMA DE CONTROL LOGÍSTICO
         </div>
     </div>
 
@@ -72,17 +78,17 @@
         document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-UY');
         
         const params = new URLSearchParams(window.location.search);
-        const rawData = params.get('data') || "";
+        const dataRaw = params.get('data') || "";
         
-        // Esta regex separa por coma, punto y coma o saltos de línea
-        const pedidos = decodeURIComponent(rawData).split(/[,;]+/);
-        const contenedor = document.getElementById('lista-pedidos');
+        // Separamos por coma, punto y coma o lo que venga de Make
+        const items = decodeURIComponent(dataRaw).split(/[,;]+/);
+        const contenedor = document.getElementById('lista-contenedora');
 
-        pedidos.forEach(p => {
-            const texto = p.trim();
+        items.forEach(item => {
+            const texto = item.trim();
             if (texto.length > 2) {
                 const div = document.createElement('div');
-                div.className = 'pedido-card';
+                div.className = 'pedido-row';
                 div.textContent = texto;
                 contenedor.appendChild(div);
             }
