@@ -3,55 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Eliminamos la altura fija. El body medirá lo que midan los pedidos */
+        /* No forzamos medidas de hoja, solo el comportamiento del texto */
         html, body { 
             margin: 0; 
             padding: 0; 
             background: #fff;
-            font-family: Arial, sans-serif;
-            width: 100%;
+            font-family: 'Helvetica', Arial, sans-serif;
+            /* Evitamos que el navegador añada espacio extra al final */
+            display: block;
         }
 
-        /* Contenedor sin altura, solo ancho de seguridad */
-        .content-area {
-            width: 180mm; /* Dejamos margen lateral para que no toque los bordes */
-            margin: 0 auto;
-            padding-top: 20px;
+        .contenedor-flexible {
+            /* Usamos un ancho menor (aprox 170mm) para que iLovePDF no lo vea "grande" */
+            width: 85%; 
+            margin: 0 auto; /* Centrado horizontal */
+            padding-top: 40px; /* Margen superior visual */
+            padding-bottom: 20px;
         }
 
         h1 { 
-            font-size: 22pt; 
-            border-bottom: 3px solid #000;
+            font-size: 24pt; 
+            font-weight: bold;
+            border-bottom: 4px solid #000;
             padding-bottom: 10px;
             margin-bottom: 20px;
-            text-transform: uppercase;
         }
 
-        .item {
+        .linea-pedido {
             font-family: 'Courier New', monospace;
-            font-size: 14pt;
+            font-size: 13pt; /* Un poco más chico para asegurar que entre en una línea */
             font-weight: bold;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid #eee;
-            color: #000;
+            /* Si el texto es muy largo, que baje de línea suavemente */
+            word-wrap: break-word; 
         }
 
         .footer {
-            margin-top: 30px;
+            margin-top: 40px;
             padding-top: 10px;
             border-top: 1px solid #000;
             text-align: center;
             font-size: 10pt;
-            color: #666;
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="content-area">
+    <div class="contenedor-flexible">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div id="listado"></div>
+        <div id="lista-datos"></div>
         <div class="footer">
-            LG AMOBLAMIENTOS - DEPÓSITO MONTEVIDEO
+            LG AMOBLAMIENTOS - LOGÍSTICA
         </div>
     </div>
 
@@ -59,13 +62,16 @@
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
+            // Usamos la barra vertical | como separador para limpiar los datos
             const items = decodeURIComponent(data).split('|');
-            const container = document.getElementById('listado');
-            items.forEach(text => {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = text;
-                container.appendChild(div);
+            const container = document.getElementById('lista-datos');
+            items.forEach(texto => {
+                if(texto.trim()){
+                    const div = document.createElement('div');
+                    div.className = 'linea-pedido';
+                    div.textContent = texto.trim();
+                    container.appendChild(div);
+                }
             });
         }
     </script>
