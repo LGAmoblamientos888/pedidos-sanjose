@@ -3,58 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* No forzamos medidas de hoja, solo el comportamiento del texto */
-        html, body { 
-            margin: 0; 
-            padding: 0; 
+        /* Reset total para que iLovePDF no tenga donde agarrarse */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
             background: #fff;
             font-family: 'Helvetica', Arial, sans-serif;
-            /* Evitamos que el navegador añada espacio extra al final */
-            display: block;
+            width: 100%;
+            /* Quitamos el height: 297mm para que sea un flujo natural */
         }
 
-        .contenedor-flexible {
-            /* Usamos un ancho menor (aprox 170mm) para que iLovePDF no lo vea "grande" */
-            width: 85%; 
-            margin: 0 auto; /* Centrado horizontal */
-            padding-top: 40px; /* Margen superior visual */
-            padding-bottom: 20px;
+        .hoja-virtual {
+            /* Forzamos un ancho que iLovePDF considere "seguro" (aprox 160mm) */
+            width: 80%; 
+            margin-left: 10%; /* Esto centra el contenido manualmente */
+            padding-top: 50px;
+            padding-bottom: 50px;
         }
 
         h1 { 
-            font-size: 24pt; 
-            font-weight: bold;
-            border-bottom: 4px solid #000;
+            font-size: 26pt; 
+            font-weight: 800;
+            color: #000;
+            border-bottom: 5px solid #000;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            letter-spacing: -1px;
         }
 
-        .linea-pedido {
-            font-family: 'Courier New', monospace;
-            font-size: 13pt; /* Un poco más chico para asegurar que entre en una línea */
+        .contenedor-lista {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .item-retiro {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14pt;
             font-weight: bold;
-            padding: 8px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #eee;
-            /* Si el texto es muy largo, que baje de línea suavemente */
-            word-wrap: break-word; 
+            /* Evita que el texto largo fuerce un ancho mayor */
+            word-break: break-all; 
+            display: flex;
+            justify-content: flex-start;
         }
 
         .footer {
-            margin-top: 40px;
-            padding-top: 10px;
-            border-top: 1px solid #000;
+            margin-top: 50px;
+            padding-top: 15px;
+            border-top: 2px solid #000;
             text-align: center;
-            font-size: 10pt;
-            color: #555;
+            font-size: 11pt;
+            font-weight: bold;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <div class="contenedor-flexible">
+    <div class="hoja-virtual">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div id="lista-datos"></div>
+        
+        <div id="target" class="contenedor-lista">
+            </div>
+
         <div class="footer">
-            LG AMOBLAMIENTOS - LOGÍSTICA
+            LG AMOBLAMIENTOS - DEPÓSITO MONTEVIDEO
         </div>
     </div>
 
@@ -62,15 +75,15 @@
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
-            // Usamos la barra vertical | como separador para limpiar los datos
+            // Usamos el pipe | para separar los elementos
             const items = decodeURIComponent(data).split('|');
-            const container = document.getElementById('lista-datos');
-            items.forEach(texto => {
-                if(texto.trim()){
+            const target = document.getElementById('target');
+            items.forEach(linea => {
+                if(linea.trim()){
                     const div = document.createElement('div');
-                    div.className = 'linea-pedido';
-                    div.textContent = texto.trim();
-                    container.appendChild(div);
+                    div.className = 'item-retiro';
+                    div.textContent = linea.trim();
+                    target.appendChild(div);
                 }
             });
         }
