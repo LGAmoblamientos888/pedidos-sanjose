@@ -1,79 +1,77 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Eliminamos CUALQUIER espacio que iLovePDF quiera meter por defecto */
-        html, body { 
-            margin: 0 !important; 
-            padding: 0 !important; 
-            width: 794px; 
-            height: 1123px;
-            overflow: hidden; /* Prohibido crear segunda página */
-            background-color: #fff;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { background: #eee; }
+
+        /* La Hoja Teórica A4 */
+        .canvas {
+            width: 210mm;
+            height: 297mm;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            border: 5px solid red; /* Si no ves este borde rojo, iLovePDF está recortando */
         }
 
-        /* El contenedor que fuerza el inicio en el pixel 0,0 */
-        .a4-container {
-            width: 794px;
-            height: 1123px;
-            padding: 30px; /* Margen interno nuestro */
-            display: flex;
-            flex-direction: column;
-            box-sizing: border-box;
+        /* Regla Superior */
+        .regla-h {
+            position: absolute;
+            top: 0; left: 0; width: 210mm; height: 10mm;
+            background: repeating-linear-gradient(90deg, #000 0, #000 1px, transparent 1px, transparent 10mm);
+            border-bottom: 1px solid black;
         }
 
-        h1 { 
-            font-family: Arial, sans-serif; 
-            font-size: 24pt; 
-            margin-bottom: 5px; 
-            border-bottom: 3px solid #000;
-            padding-bottom: 10px;
+        /* Regla Lateral */
+        .regla-v {
+            position: absolute;
+            top: 0; left: 0; width: 10mm; height: 297mm;
+            background: repeating-linear-gradient(0deg, #000 0, #000 1px, transparent 1px, transparent 10mm);
+            border-right: 1px solid black;
         }
 
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 10px;
-        }
-
-        td {
-            font-family: 'Courier New', monospace;
+        .info {
+            position: absolute;
+            top: 50mm;
+            left: 50mm;
+            font-family: monospace;
             font-size: 14pt;
-            font-weight: bold;
-            padding: 10px 0;
-            border-bottom: 1px solid #ddd;
-            color: #000;
         }
 
-        .footer {
-            margin-top: auto; /* Empuja al fondo de la hoja */
-            text-align: center;
-            font-family: Arial, sans-serif;
-            font-size: 10pt;
-            border-top: 1px solid #000;
-            padding-top: 10px;
+        .test-box {
+            width: 100mm;
+            height: 100mm;
+            border: 2px solid blue;
+            position: absolute;
+            top: 20mm;
+            left: 20mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: blue;
         }
     </style>
 </head>
 <body>
-    <div class="a4-container">
-        <h1>RETIROS SAN JOSÉ</h1>
+    <div class="canvas">
+        <div class="regla-h"></div>
+        <div class="regla-v"></div>
         
-        <div id="render-target">
-            </div>
+        <div class="test-box">CUADRO DE 10cm x 10cm</div>
 
-        <div class="footer">
-            LG AMOBLAMIENTOS - DEPÓSITO
+        <div class="info">
+            <h2>TEST DE CALIBRACIÓN</h2>
+            <p>1. Si el borde rojo no se ve: iLovePDF añade márgenes externos.</p>
+            <p>2. Si el cuadro azul no mide 10cm: iLovePDF está aplicando Zoom.</p>
+            <p>3. Datos recibidos: <span id="debug-data"></span></p>
         </div>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const data = params.get('data');
-        if (data) {
-            document.getElementById('render-target').innerHTML = decodeURIComponent(data);
-        }
+        document.getElementById('debug-data').textContent = params.get('data') || "Sin datos";
     </script>
 </body>
 </html>
