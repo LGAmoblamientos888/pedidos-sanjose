@@ -2,87 +2,78 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Retiros San José</title>
     <style>
-        /* 1. Definición global del tamaño A4 */
-        html, body {
-            margin: 0;
-            padding: 0;
-            background-color: #FFFFFF;
+        /* Forzamos medidas físicas que iLovePDF entienda sin errores */
+        @page { size: A4; margin: 0; }
+        html, body { 
+            margin: 0; 
+            padding: 0; 
+            background: #ffffff; 
+            width: 210mm; 
+            height: 296mm; /* Un mm menos para evitar la 2da hoja */
+            overflow: hidden; 
         }
-
-        /* 2. Este contenedor obliga a iLovePDF a ver una hoja completa */
         .sheet {
-            width: 210mm;
-            min-height: 297mm;
-            padding: 20mm;
-            margin: 0 auto;
+            padding: 15mm;
             box-sizing: border-box;
-            background: white;
-            position: relative;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
-
         h1 { 
-            font-size: 24pt; 
+            font-family: Arial, sans-serif; 
+            font-size: 22pt; 
             margin: 0; 
-            border-bottom: 2px solid black; 
+            border-bottom: 3px solid #000; 
         }
-
-        .info-header { 
-            font-size: 11pt; 
-            margin-bottom: 30pt; 
-            margin-top: 5pt; 
+        .info { 
+            font-family: Arial, sans-serif; 
+            font-size: 10pt; 
+            margin: 5pt 0 20pt 0; 
         }
-
-        .lista { flex-grow: 1; }
-
-        .fila { 
-            border-bottom: 1px solid black; 
-            padding: 10pt 0; 
-            font-size: 13pt; 
-            list-style: none;
+        .item { 
+            font-family: 'Courier New', monospace; /* Fuente tipo factura, muy legible */
+            font-size: 12pt; 
+            padding: 8pt 0; 
+            border-bottom: 1px solid #000; 
         }
-
-        /* 3. Footer fijo al final de la hoja A4 */
         .footer { 
+            margin-top: auto; 
+            font-family: Arial, sans-serif; 
             font-size: 9pt; 
-            border-top: 1px solid black; 
-            padding-top: 10pt; 
-            margin-top: 20pt;
+            border-top: 1px solid #000; 
+            padding-top: 5pt; 
         }
     </style>
 </head>
 <body>
     <div class="sheet">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div class="info-header">
-            <strong>DOCUMENTO DE CONTROL INTERNO</strong><br>
-            Generado el: <span id="fecha"></span>
+        <div class="info">
+            <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
         </div>
 
-        <div id="lista-contenedora" class="lista">
+        <div id="lista-contenedora">
             </div>
 
         <div class="footer">
-            LG Amoblamientos - Gestión de Logística Automática
+            LG Amoblamientos - Reporte Automático de Salida
         </div>
     </div>
 
     <script>
-        document.getElementById('fecha').textContent = new Date().toLocaleDateString();
-        const urlParams = new URLSearchParams(window.location.search);
-        const rawData = urlParams.get('data');
+        document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
+        const params = new URLSearchParams(window.location.search);
+        const data = params.get('data');
         const contenedor = document.getElementById('lista-contenedora');
 
-        if (rawData) {
+        if (data) {
             contenedor.innerHTML = "";
-            const pedidos = decodeURIComponent(rawData).split(',');
-            pedidos.forEach(pedido => {
+            const pedidos = decodeURIComponent(data).split(',');
+            pedidos.forEach(p => {
                 const div = document.createElement('div');
-                div.className = 'fila';
-                div.textContent = pedido;
+                div.className = 'item';
+                div.textContent = p.trim();
                 contenedor.appendChild(div);
             });
         }
