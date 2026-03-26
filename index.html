@@ -3,66 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Eliminamos CUALQUIER restricción de tamaño fijo */
+        /* 1. Definimos el tamaño exacto que iLovePDF entiende como 'hoja' */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        html, body { 
-            width: 100%; 
-            background: #ffffff; 
-            font-family: 'Helvetica', Arial, sans-serif;
-            color: #000;
+        body { 
+            width: 800px; /* Ancho real de una A4 a 96dpi */
+            font-family: Arial, sans-serif;
+            background: #ffffff;
         }
 
-        /* Usamos un contenedor que se estire al máximo del navegador de iLovePDF */
-        .wrapper {
-            width: 100%;
-            padding: 50px; /* Margen de seguridad para la impresión */
+        .hoja {
+            width: 800px;
+            min-height: 1120px; /* Alto de una A4 */
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
         }
 
         h1 { 
-            font-size: 45pt; /* Tamaño enorme para compensar el achique */
-            border-bottom: 6px solid #000; 
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
+            font-size: 32pt; 
+            border-bottom: 5px solid #000; 
+            margin-bottom: 10px;
+            padding-bottom: 10px;
         }
 
-        .info-header { 
-            font-size: 22pt; 
-            margin-bottom: 50px; 
-            font-weight: bold;
-        }
+        .fecha-info { font-size: 16pt; margin-bottom: 40px; }
 
-        .list-container { width: 100%; }
-
-        /* Cada línea de producto */
-        .product-row {
-            font-family: 'Courier New', monospace;
-            font-size: 24pt; /* Fuente muy grande para que sea legible en depósito */
-            padding: 20px 0;
-            border-bottom: 2px solid #eee;
+        /* 2. Forzamos que CADA producto sea una fila completa */
+        .item-logistica {
+            display: block; /* Obliga a bajar de línea */
             width: 100%;
-            display: block;
-            white-space: nowrap; /* Evita que el código y el producto se separen en dos líneas */
+            font-family: 'Courier New', monospace;
+            font-size: 18pt;
+            font-weight: bold;
+            padding: 15px 0;
+            border-bottom: 2px solid #eee;
+            word-break: break-all; /* Por si el código es muy largo */
         }
 
         .footer {
-            margin-top: 50px;
+            margin-top: auto; /* Lo empuja al final de la A4 */
             border-top: 3px solid #000;
             padding-top: 20px;
-            font-size: 18pt;
             text-align: center;
+            font-size: 14pt;
         }
     </style>
 </head>
 <body>
-    <div class="wrapper">
+    <div class="hoja">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div class="info-header">
-            CONTROL DE LOGÍSTICA | Fecha: <span id="fecha"></span>
+        <div class="fecha-info">
+            CONTROL DE LOGÍSTICA | <span id="fecha"></span>
         </div>
 
-        <div id="items-list" class="list-container">
+        <div id="contenedor-items">
             </div>
 
         <div class="footer">
@@ -71,22 +67,21 @@
     </div>
 
     <script>
-        // Fecha actual
         document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
         
         const params = new URLSearchParams(window.location.search);
-        const rawData = params.get('data');
-        const container = document.getElementById('items-list');
+        const dataRaw = params.get('data');
+        const lista = document.getElementById('contenedor-items');
 
-        if (rawData) {
-            // Cambié el separador a ";" porque es el que usas en tu módulo de Make 
-            const items = decodeURIComponent(rawData).split(';');
-            items.forEach(item => {
-                if(item.trim() !== "") {
-                    const row = document.createElement('div');
-                    row.className = 'product-row';
-                    row.textContent = item.trim();
-                    container.appendChild(row);
+        if (dataRaw) {
+            // Usamos el separador que configuraste en Make (punto y coma)
+            const productos = decodeURIComponent(dataRaw).split(';');
+            productos.forEach(prod => {
+                if(prod.trim() !== "") {
+                    const div = document.createElement('div');
+                    div.className = 'item-logistica';
+                    div.textContent = prod.trim();
+                    lista.appendChild(div);
                 }
             });
         }
