@@ -3,88 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* 1. Definimos el tamaño exacto que iLovePDF entiende como 'hoja' */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
+        @page { size: A4; margin: 0; }
+
         body { 
-            width: 800px; /* Ancho real de una A4 a 96dpi */
-            font-family: Arial, sans-serif;
+            width: 794px; /* Ancho exacto A4 */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #ffffff;
+            color: #333;
         }
 
-        .hoja {
-            width: 800px;
-            min-height: 1120px; /* Alto de una A4 */
-            padding: 50px;
+        .container {
+            width: 794px;
+            padding: 40px;
+            min-height: 1122px;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
-        h1 { 
-            font-size: 32pt; 
-            border-bottom: 5px solid #000; 
-            margin-bottom: 10px;
-            padding-bottom: 10px;
+        .header {
+            border-bottom: 5px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
         }
 
-        .fecha-info { font-size: 16pt; margin-bottom: 40px; }
+        h1 { font-size: 32px; color: #000; text-transform: uppercase; }
+        .date { font-size: 18px; margin-top: 5px; color: #666; }
 
-        /* 2. Forzamos que CADA producto sea una fila completa */
-        .item-logistica {
-            display: block; /* Obliga a bajar de línea */
+        /* CADA ITEM ES UN BLOQUE RÍGIDO */
+        .pedido-card {
+            display: block;
             width: 100%;
+            background: #f9f9f9;
+            margin-bottom: 10px;
+            padding: 15px 20px;
+            border-left: 8px solid #000;
             font-family: 'Courier New', monospace;
-            font-size: 18pt;
+            font-size: 20px;
             font-weight: bold;
-            padding: 15px 0;
-            border-bottom: 2px solid #eee;
-            word-break: break-all; /* Por si el código es muy largo */
+            page-break-inside: avoid; /* Evita que un pedido se parta entre dos hojas */
         }
 
         .footer {
-            margin-top: auto; /* Lo empuja al final de la A4 */
-            border-top: 3px solid #000;
+            margin-top: auto;
+            border-top: 2px solid #ccc;
             padding-top: 20px;
             text-align: center;
-            font-size: 14pt;
+            font-size: 14px;
+            color: #999;
         }
     </style>
 </head>
 <body>
-    <div class="hoja">
-        <h1>RETIROS SAN JOSÉ</h1>
-        <div class="fecha-info">
-            CONTROL DE LOGÍSTICA | <span id="fecha"></span>
+    <div class="container">
+        <div class="header">
+            <h1>RETIROS SAN JOSÉ</h1>
+            <div class="date">Logística | <span id="current-date"></span></div>
         </div>
 
-        <div id="contenedor-items">
-            </div>
+        <div id="lista-pedidos"></div>
 
         <div class="footer">
-            LG Amoblamientos - Reporte Automático de Salida
+            LG Amoblamientos - Documento de Control de Depósito
         </div>
     </div>
 
     <script>
-        document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('es-UY');
         
         const params = new URLSearchParams(window.location.search);
-        const dataRaw = params.get('data');
-        const lista = document.getElementById('contenedor-items');
+        const rawData = params.get('data') || "";
+        
+        // Esta regex separa por coma, punto y coma o saltos de línea
+        const pedidos = decodeURIComponent(rawData).split(/[,;]+/);
+        const contenedor = document.getElementById('lista-pedidos');
 
-        if (dataRaw) {
-            // Usamos el separador que configuraste en Make (punto y coma)
-            const productos = decodeURIComponent(dataRaw).split(';');
-            productos.forEach(prod => {
-                if(prod.trim() !== "") {
-                    const div = document.createElement('div');
-                    div.className = 'item-logistica';
-                    div.textContent = prod.trim();
-                    lista.appendChild(div);
-                }
-            });
-        }
+        pedidos.forEach(p => {
+            const texto = p.trim();
+            if (texto.length > 2) {
+                const div = document.createElement('div');
+                div.className = 'pedido-card';
+                div.textContent = texto;
+                contenedor.appendChild(div);
+            }
+        });
     </script>
 </body>
 </html>
