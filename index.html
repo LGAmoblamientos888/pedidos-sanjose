@@ -2,71 +2,75 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
-        /* Forzamos el tamaño de papel A4 a nivel de sistema de impresión */
-        @page { 
-            size: A4; 
-            margin: 10mm; /* Margen físico para la impresora */
-        }
-
+        /* Reset total */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        @page { size: A4; margin: 0; }
 
         body { 
-            width: 190mm; /* Ancho disponible real */
-            font-family: 'Helvetica', Arial, sans-serif;
+            width: 794px; /* Ancho exacto de A4 en píxeles de pantalla */
             background: #fff;
-            color: #000;
+            font-family: Arial, sans-serif;
+            /* El hack definitivo: reducimos la escala visual para que iLovePDF no "agite" el layout */
+            zoom: 0.95; 
+        }
+
+        .hoja-imprimible {
+            width: 794px;
+            padding: 40px;
+            min-height: 1122px; /* Altura exacta A4 */
+            position: relative;
         }
 
         .header {
-            border-bottom: 3pt solid #000;
+            border-bottom: 2px solid #000;
             padding-bottom: 10px;
             margin-bottom: 20px;
         }
 
-        h1 { font-size: 26pt; font-weight: 900; }
+        h1 { font-size: 22pt; font-weight: bold; }
 
-        /* Estilo de lista para que iLovePDF no se maree con el ancho */
-        ul { 
-            list-style: none; 
-            width: 100%;
-        }
+        /* Estructura de lista ultra-limpia */
+        ul { list-style: none; width: 100%; }
 
         li {
             font-family: 'Courier New', monospace;
-            font-size: 16pt;
+            font-size: 13pt; /* Bajamos el tamaño: antes estaba muy grande */
             font-weight: bold;
-            padding: 15px 0;
-            border-bottom: 1px solid #000;
-            display: block;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
             width: 100%;
-            /* Evita que un item se corte entre dos páginas */
-            page-break-inside: avoid; 
+            display: block;
         }
 
         .footer {
-            margin-top: 30px;
-            font-size: 10pt;
+            position: absolute;
+            bottom: 40px;
+            width: calc(100% - 80px);
+            border-top: 1px solid #000;
+            padding-top: 10px;
             text-align: center;
-            color: #666;
-            text-transform: uppercase;
+            font-size: 10pt;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>RETIROS SAN JOSÉ</h1>
-    </div>
-
-    <div id="content">
+    <div class="hoja-imprimible">
+        <div class="header">
+            <h1>RETIROS SAN JOSÉ</h1>
         </div>
 
-    <div class="footer">
-        LG Amoblamientos - Control de Logística
+        <div id="content">
+            </div>
+
+        <div class="footer">
+            LG AMOBLAMIENTOS - LOGÍSTICA
+        </div>
     </div>
 
     <script>
-        // Inyección instantánea
         const params = new URLSearchParams(window.location.search);
         const data = params.get('data');
         if (data) {
