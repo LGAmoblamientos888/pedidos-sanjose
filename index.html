@@ -3,64 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Reset para ocupar todo el espacio del conversor */
+        /* Eliminamos CUALQUIER restricción de tamaño fijo */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        @page { size: A4; margin: 0; }
-
         html, body { 
             width: 100%; 
-            height: 100%; 
             background: #ffffff; 
-            overflow: hidden; 
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica', Arial, sans-serif;
+            color: #000;
         }
 
-        /* El contenedor ocupa el 100% del ancho del 'navegador' de iLovePDF */
-        .page-container {
-            width: 100vw; 
-            height: 100vh;
-            padding: 40px; /* Margen estético para que no toque los bordes físicos */
-            display: flex;
-            flex-direction: column;
+        /* Usamos un contenedor que se estire al máximo del navegador de iLovePDF */
+        .wrapper {
+            width: 100%;
+            padding: 50px; /* Margen de seguridad para la impresión */
         }
 
         h1 { 
-            font-size: 28pt; /* Aumentamos tamaño para que se vea profesional */
-            border-bottom: 4px solid #000; 
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            font-size: 45pt; /* Tamaño enorme para compensar el achique */
+            border-bottom: 6px solid #000; 
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
         }
 
-        .meta-info { font-size: 14pt; margin-bottom: 40px; }
+        .info-header { 
+            font-size: 22pt; 
+            margin-bottom: 50px; 
+            font-weight: bold;
+        }
 
-        .item-list { flex-grow: 1; }
+        .list-container { width: 100%; }
 
-        .row {
+        /* Cada línea de producto */
+        .product-row {
             font-family: 'Courier New', monospace;
-            font-size: 16pt; /* Fuente más grande para lectura fácil en depósito */
-            padding: 12px 0;
-            border-bottom: 1px solid #ddd;
+            font-size: 24pt; /* Fuente muy grande para que sea legible en depósito */
+            padding: 20px 0;
+            border-bottom: 2px solid #eee;
             width: 100%;
+            display: block;
+            white-space: nowrap; /* Evita que el código y el producto se separen en dos líneas */
         }
 
         .footer {
-            border-top: 2px solid #000;
-            padding-top: 15px;
-            font-size: 12pt;
+            margin-top: 50px;
+            border-top: 3px solid #000;
+            padding-top: 20px;
+            font-size: 18pt;
             text-align: center;
-            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="page-container">
+    <div class="wrapper">
         <h1>RETIROS SAN JOSÉ</h1>
-        <div class="meta-info">
-            <strong>CONTROL DE LOGÍSTICA</strong> | Fecha: <span id="fecha"></span>
+        <div class="info-header">
+            CONTROL DE LOGÍSTICA | Fecha: <span id="fecha"></span>
         </div>
 
-        <div id="items" class="item-list"></div>
+        <div id="items-list" class="list-container">
+            </div>
 
         <div class="footer">
             LG Amoblamientos - Reporte Automático de Salida
@@ -68,19 +71,22 @@
     </div>
 
     <script>
+        // Fecha actual
         document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-UY');
-        const urlParams = new URLSearchParams(window.location.search);
-        const dataStr = urlParams.get('data');
-        const list = document.getElementById('items');
+        
+        const params = new URLSearchParams(window.location.search);
+        const rawData = params.get('data');
+        const container = document.getElementById('items-list');
 
-        if (dataStr) {
-            const lines = decodeURIComponent(dataStr).split(',');
-            lines.forEach(line => {
-                if(line.trim()){
-                    const div = document.createElement('div');
-                    div.className = 'row';
-                    div.textContent = line.trim();
-                    list.appendChild(div);
+        if (rawData) {
+            // Cambié el separador a ";" porque es el que usas en tu módulo de Make 
+            const items = decodeURIComponent(rawData).split(';');
+            items.forEach(item => {
+                if(item.trim() !== "") {
+                    const row = document.createElement('div');
+                    row.className = 'product-row';
+                    row.textContent = item.trim();
+                    container.appendChild(row);
                 }
             });
         }
