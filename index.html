@@ -4,56 +4,65 @@
     <meta charset="UTF-8">
     <title>Retiros San José</title>
     <style>
-        /* Configuración para A4 y Blanco y Negro */
-        @page { size: A4; margin: 1cm; }
+        /* 1. Forzar tamaño A4 físico */
+        @page { 
+            size: A4; 
+            margin: 0; 
+        }
         body { 
             font-family: Arial, sans-serif; 
             background-color: white; 
             color: black; 
             margin: 0; 
-            padding: 0; 
+            padding: 0;
+            /* Asegura que el cuerpo ocupe toda la hoja */
+            width: 210mm;
+            min-height: 297mm;
         }
-        .container { width: 100%; }
+        .page-container {
+            padding: 1.5cm;
+            box-sizing: border-box;
+        }
         
-        /* Encabezado Simple */
         h1 { 
-            font-size: 22px; 
+            font-size: 20pt; 
             text-transform: uppercase; 
             border-bottom: 2px solid black; 
-            padding-bottom: 5px;
-            margin-bottom: 5px;
+            margin: 0 0 5pt 0;
         }
-        .info-header { font-size: 12px; margin-bottom: 20px; }
+        .info-header { font-size: 10pt; margin-bottom: 25pt; }
 
-        /* Lista de facturas tipo Tabla */
-        .tabla-pedidos { width: 100%; border-collapse: collapse; }
+        /* Estilo de lista más compacto y profesional */
         .fila { 
-            border-bottom: 1px solid black; 
-            padding: 10px 5px; 
-            display: flex; 
-            justify-content: flex-start;
-            font-size: 14px;
+            border-bottom: 1px solid #000; 
+            padding: 8pt 0; 
+            font-size: 11pt;
+            display: flex;
         }
-        .nro { font-weight: bold; width: 80px; }
-        .detalle { flex-grow: 1; }
 
-        /* Ocultar elementos innecesarios en el PDF */
-        .footer { margin-top: 30px; font-size: 10px; border-top: 1px dashed gray; padding-top: 10px; }
+        .footer { 
+            position: absolute; 
+            bottom: 1.5cm; 
+            width: 180mm;
+            font-size: 9pt; 
+            border-top: 1px solid black; 
+            padding-top: 5pt; 
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="page-container">
         <h1>RETIROS SAN JOSÉ</h1>
         <div class="info-header">
-            <strong>Documento de Control Interno</strong><br>
-            Generado el: <span id="fecha"></span>
+            <strong>DOCUMENTO DE CONTROL INTERNO</strong> <br>
+            Generado el: <span id="fecha"></span> 
         </div>
 
         <div id="lista-contenedora">
             </div>
 
         <div class="footer">
-            LG Amoblamientos - Gestión de Logística Automática
+            LG Amoblamientos - Gestión de Logística Automática 
         </div>
     </div>
 
@@ -71,7 +80,7 @@
             pedidos.forEach(pedido => {
                 const div = document.createElement('div');
                 div.className = 'fila';
-                div.innerHTML = `<span>${pedido}</span>`;
+                div.textContent = pedido;
                 contenedor.appendChild(div);
             });
         } else {
