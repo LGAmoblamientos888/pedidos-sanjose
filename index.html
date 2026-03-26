@@ -2,48 +2,80 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalle de Pedidos - San José</title>
+    <title>Retiros San José</title>
     <style>
-        :root { --primary: #2c3e50; --accent: #e67e22; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 8px solid var(--accent); }
-        h1 { color: var(--primary); text-align: center; margin-bottom: 5px; }
-        .subtitle { text-align: center; color: #666; font-size: 0.9em; margin-bottom: 30px; }
-        .item { background: #fff; border: 1px solid #eee; padding: 15px; margin-bottom: 10px; border-radius: 8px; border-left: 4px solid var(--primary); }
-        .footer { text-align: center; margin-top: 20px; font-size: 0.8em; color: #999; }
+        /* Configuración para A4 y Blanco y Negro */
+        @page { size: A4; margin: 1cm; }
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: white; 
+            color: black; 
+            margin: 0; 
+            padding: 0; 
+        }
+        .container { width: 100%; }
+        
+        /* Encabezado Simple */
+        h1 { 
+            font-size: 22px; 
+            text-transform: uppercase; 
+            border-bottom: 2px solid black; 
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+        .info-header { font-size: 12px; margin-bottom: 20px; }
+
+        /* Lista de facturas tipo Tabla */
+        .tabla-pedidos { width: 100%; border-collapse: collapse; }
+        .fila { 
+            border-bottom: 1px solid black; 
+            padding: 10px 5px; 
+            display: flex; 
+            justify-content: flex-start;
+            font-size: 14px;
+        }
+        .nro { font-weight: bold; width: 80px; }
+        .detalle { flex-grow: 1; }
+
+        /* Ocultar elementos innecesarios en el PDF */
+        .footer { margin-top: 30px; font-size: 10px; border-top: 1px dashed gray; padding-top: 10px; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>LG Amoblamientos</h1>
-        <div class="subtitle">Pendientes de Retiro - San José</div>
-        <div id="lista-contenedora">
-            <p style="text-align:center;">Cargando información...</p>
+        <h1>RETIROS SAN JOSÉ</h1>
+        <div class="info-header">
+            <strong>Documento de Control Interno</strong><br>
+            Generado el: <span id="fecha"></span>
         </div>
-        <div class="footer">Generado automáticamente por Sistema de Logística</div>
+
+        <div id="lista-contenedora">
+            </div>
+
+        <div class="footer">
+            LG Amoblamientos - Gestión de Logística Automática
+        </div>
     </div>
 
     <script>
-        // Leemos el parámetro "data" de la URL
+        document.getElementById('fecha').textContent = new Date().toLocaleDateString();
+
         const urlParams = new URLSearchParams(window.location.search);
         const rawData = urlParams.get('data');
         const contenedor = document.getElementById('lista-contenedora');
 
         if (rawData) {
-            contenedor.innerHTML = ""; // Limpiar el "Cargando..."
-            
-            // Decodificamos y separamos por la coma que configuraste en PAD
+            contenedor.innerHTML = "";
             const pedidos = decodeURIComponent(rawData).split(',');
 
             pedidos.forEach(pedido => {
                 const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = pedido;
+                div.className = 'fila';
+                div.innerHTML = `<span>${pedido}</span>`;
                 contenedor.appendChild(div);
             });
         } else {
-            contenedor.innerHTML = "<p style='text-align:center;'>No hay pedidos pendientes en este enlace.</p>";
+            contenedor.innerHTML = "<p>No hay datos pendientes.</p>";
         }
     </script>
 </body>
