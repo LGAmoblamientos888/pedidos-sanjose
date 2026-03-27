@@ -1,85 +1,87 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=800">
+    <title>Retiros San Jose</title>
     <style>
+        /* 1. RESET Y BLOQUEO DE ZOOM EN CHROMIUM */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        body { 
+        @page {
+            size: A4 portrait;
+            margin: 0; 
+        }
+
+        body {
             background: #fff;
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
             font-family: Arial, sans-serif;
-            width: 800px; /* Ancho fijo para que iLovePDF no lo mueva */
+            overflow-x: hidden; /* Prohibido desbordar a los lados */
         }
 
-        .hoja-final {
-            width: 800px;
-            padding: 40px 50px;
-            min-height: 1050px; /* Altura aproximada de un A4 en px */
-            display: flex;
-            flex-direction: column;
+        .contenedor {
+            width: 210mm;
+            padding: 20mm 15mm;
         }
 
-        h1 { 
-            font-size: 32px; 
+        h1 {
+            font-size: 28px;
             font-weight: bold;
-            border-bottom: 5px solid #000;
-            padding-bottom: 15px;
-            margin-bottom: 30px;
-            text-transform: uppercase;
-        }
-
-        .lista-pedidos {
-            flex-grow: 1;
+            text-align: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 25px;
         }
 
         .item {
-            font-family: 'Courier New', monospace;
-            font-size: 20px; /* Letra grande para que se vea bien tras el zoom */
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
             font-weight: bold;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            border-bottom: 1px dashed #999;
             color: #000;
-        }
-
-        .footer {
-            margin-top: 30px;
-            border-top: 2px solid #000;
-            padding-top: 20px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: bold;
+            /* 2. ANTI-ZOOM: Obligamos a romper la palabra antes que ensanchar la hoja */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            white-space: normal;
         }
     </style>
 </head>
 <body>
-    <div class="hoja-final">
+    <div class="contenedor">
         <h1>RETIROS SAN JOSÉ</h1>
-        
-        <div id="render" class="lista-pedidos">
-            </div>
-
-        <div class="footer">
-            LG AMOBLAMIENTOS - DEPÓSITO MONTEVIDEO
-        </div>
+        <div id="render"></div>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        let data = params.get('data') || "";
+        let rawData = params.get('data') || "";
         
-        // Limpiamos los datos de ruidos de Make
-        data = decodeURIComponent(data).replace(/["\n\r]/g, '');
-        
+        // 3. LA ASPIRADORA DE DATOS
+        // Destruimos la basura de formato que inyecta Make por los saltos de línea
+        let cleanData = decodeURIComponent(rawData)
+            .replace(/"/g, '')     // Fuera comillas
+            .replace(/\n/g, ' ')   // Convierte saltos de linea reales en espacios
+            .replace(/\r/g, '')    // Fuera retornos de carro
+            .replace(/ +/g, ' ');  // Unifica espacios dobles
+            
         const container = document.getElementById('render');
-        const items = data.split('|');
+        const items = cleanData.split('|');
         
-        items.forEach(text => {
-            const limpio = text.trim();
-            if(limpio.length > 0 && limpio !== ",") {
+        items.forEach(item => {
+            let textoLimpio = item.trim();
+            
+            // Si Make dejó una coma huérfana al principio, la borramos
+            if (textoLimpio.startsWith(',')) {
+                textoLimpio = textoLimpio.substring(1).trim();
+            }
+
+            if (textoLimpio.length > 2) {
                 const div = document.createElement('div');
                 div.className = 'item';
-                div.textContent = limpio.startsWith(',') ? limpio.substring(1).trim() : limpio;
+                div.textContent = textoLimpio;
                 container.appendChild(div);
             }
         });
