@@ -1,84 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <style>
-        /* Reset absoluto */
-        * { margin: 0; padding: 0; }
+        @page { 
+            size: A4 portrait; 
+            margin: 0; 
+        }
         
-        body { 
-            background: #fff;
+        * { box-sizing: border-box; }
+        
+        html, body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
             font-family: Arial, sans-serif;
-            /* NO usamos flex ni centrado aquí para evitar el efecto "miniatura" */
+            overflow: hidden; /* Corta de raíz la creación de la página 2 */
         }
 
-        /* Esta tabla actúa como nuestra "hoja" */
-        .tabla-principal {
-            width: 700px; /* Ancho de seguridad total */
-            margin: 0 auto; /* Centrado simple */
-            border-collapse: collapse;
+        .contenedor-a4 {
+            width: 210mm;
+            height: 296mm; /* 1mm menos para absorber el margen de error de iLovePDF */
+            padding: 15mm;
+            position: relative; /* Clave para anclar el footer */
         }
 
-        .header-spacer { height: 40px; } /* Margen superior real */
-
-        h1 { 
-            font-size: 26pt; 
-            font-weight: bold;
-            border-bottom: 5px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            font-family: sans-serif;
+        h1 {
+            font-size: 24pt;
+            font-weight: 900;
+            border-bottom: 3px solid #000;
+            margin: 0 0 10mm 0;
+            padding-bottom: 5mm;
+            letter-spacing: -1px;
         }
 
-        .item-fila {
+        .item-retiro {
             font-family: 'Courier New', monospace;
-            font-size: 15pt;
+            font-size: 14pt;
             font-weight: bold;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-            color: #000;
+            border-bottom: 1px solid #ddd;
+            padding: 4mm 0;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; /* Si el código es enorme, le pone "..." en vez de desarmar la hoja */
         }
 
         .footer {
-            padding-top: 30px;
+            position: absolute;
+            bottom: 15mm;
+            left: 15mm;
+            width: 180mm; /* 210mm - 30mm de padding lateral */
+            border-top: 1px solid #000;
+            padding-top: 5mm;
             text-align: center;
-            font-size: 11pt;
+            font-size: 10pt;
             font-weight: bold;
-            border-top: 2px solid #000;
-            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <table class="tabla-principal">
-        <tr><td class="header-spacer"></td></tr>
-        <tr>
-            <td>
-                <h1>RETIROS SAN JOSÉ</h1>
-                <div id="render-target">
-                    </div>
-                <div class="footer">
-                    LG AMOBLAMIENTOS - DEPÓSITO
-                </div>
-            </td>
-        </tr>
-    </table>
+    <div class="contenedor-a4">
+        <h1>RETIROS SAN JOSÉ</h1>
+        
+        <div id="lista-pedidos">
+            </div>
+
+        <div class="footer">
+            LG AMOBLAMIENTOS - SISTEMA DE CONTROL LOGÍSTICO
+        </div>
+    </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        const data = params.get('data');
-        if (data) {
-            const items = decodeURIComponent(data).split('|');
-            const container = document.getElementById('render-target');
-            items.forEach(text => {
-                if(text.trim()){
-                    const div = document.createElement('div');
-                    div.className = 'item-fila';
-                    div.textContent = text.trim();
-                    container.appendChild(div);
-                }
-            });
-        }
+        let rawData = params.get('data') || "";
+        
+        // Hack: Limpieza radical de la basura estructural (comillas, \n, \r)
+        rawData = decodeURIComponent(rawData).replace(/["\n\r]/g, '');
+        
+        const items = rawData.split('|');
+        const container = document.getElementById('lista-pedidos');
+        
+        items.forEach(texto => {
+            const limpio = texto.trim();
+            if(limpio.length > 0 && limpio !== ",") {
+                // Eliminar comas residuales al principio del string si quedaron
+                const finalStr = limpio.startsWith(',') ? limpio.substring(1).trim() : limpio;
+                
+                const div = document.createElement('div');
+                div.className = 'item-retiro';
+                div.textContent = finalStr;
+                container.appendChild(div);
+            }
+        });
     </script>
 </body>
 </html>
