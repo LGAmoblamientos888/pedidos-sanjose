@@ -1,97 +1,85 @@
 <!DOCTYPE html>
-<html lang="es">
+<html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=800">
     <style>
-        @page { 
-            size: A4 portrait; 
-            margin: 0; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         
-        * { box-sizing: border-box; }
-        
-        html, body {
-            width: 210mm;
-            height: 297mm;
-            margin: 0;
-            padding: 0;
-            background: #ffffff;
+        body { 
+            background: #fff;
             font-family: Arial, sans-serif;
-            overflow: hidden; /* Corta de raíz la creación de la página 2 */
+            width: 800px; /* Ancho fijo para que iLovePDF no lo mueva */
         }
 
-        .contenedor-a4 {
-            width: 210mm;
-            height: 296mm; /* 1mm menos para absorber el margen de error de iLovePDF */
-            padding: 15mm;
-            position: relative; /* Clave para anclar el footer */
+        .hoja-final {
+            width: 800px;
+            padding: 40px 50px;
+            min-height: 1050px; /* Altura aproximada de un A4 en px */
+            display: flex;
+            flex-direction: column;
         }
 
-        h1 {
-            font-size: 24pt;
-            font-weight: 900;
-            border-bottom: 3px solid #000;
-            margin: 0 0 10mm 0;
-            padding-bottom: 5mm;
-            letter-spacing: -1px;
-        }
-
-        .item-retiro {
-            font-family: 'Courier New', monospace;
-            font-size: 14pt;
+        h1 { 
+            font-size: 32px; 
             font-weight: bold;
-            border-bottom: 1px solid #ddd;
-            padding: 4mm 0;
-            width: 100%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis; /* Si el código es enorme, le pone "..." en vez de desarmar la hoja */
+            border-bottom: 5px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+
+        .lista-pedidos {
+            flex-grow: 1;
+        }
+
+        .item {
+            font-family: 'Courier New', monospace;
+            font-size: 20px; /* Letra grande para que se vea bien tras el zoom */
+            font-weight: bold;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            color: #000;
         }
 
         .footer {
-            position: absolute;
-            bottom: 15mm;
-            left: 15mm;
-            width: 180mm; /* 210mm - 30mm de padding lateral */
-            border-top: 1px solid #000;
-            padding-top: 5mm;
+            margin-top: 30px;
+            border-top: 2px solid #000;
+            padding-top: 20px;
             text-align: center;
-            font-size: 10pt;
+            font-size: 14px;
             font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="contenedor-a4">
+    <div class="hoja-final">
         <h1>RETIROS SAN JOSÉ</h1>
         
-        <div id="lista-pedidos">
+        <div id="render" class="lista-pedidos">
             </div>
 
         <div class="footer">
-            LG AMOBLAMIENTOS - SISTEMA DE CONTROL LOGÍSTICO
+            LG AMOBLAMIENTOS - DEPÓSITO MONTEVIDEO
         </div>
     </div>
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        let rawData = params.get('data') || "";
+        let data = params.get('data') || "";
         
-        // Hack: Limpieza radical de la basura estructural (comillas, \n, \r)
-        rawData = decodeURIComponent(rawData).replace(/["\n\r]/g, '');
+        // Limpiamos los datos de ruidos de Make
+        data = decodeURIComponent(data).replace(/["\n\r]/g, '');
         
-        const items = rawData.split('|');
-        const container = document.getElementById('lista-pedidos');
+        const container = document.getElementById('render');
+        const items = data.split('|');
         
-        items.forEach(texto => {
-            const limpio = texto.trim();
+        items.forEach(text => {
+            const limpio = text.trim();
             if(limpio.length > 0 && limpio !== ",") {
-                // Eliminar comas residuales al principio del string si quedaron
-                const finalStr = limpio.startsWith(',') ? limpio.substring(1).trim() : limpio;
-                
                 const div = document.createElement('div');
-                div.className = 'item-retiro';
-                div.textContent = finalStr;
+                div.className = 'item';
+                div.textContent = limpio.startsWith(',') ? limpio.substring(1).trim() : limpio;
                 container.appendChild(div);
             }
         });
