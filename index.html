@@ -2,89 +2,36 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Retiros San Jose</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retiros San José | LG Amoblamientos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 1. RESET Y BLOQUEO DE ZOOM EN CHROMIUM */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        @page {
-            size: A4 portrait;
-            margin: 0; 
-        }
-
-        body {
-            background: #fff;
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
-            font-family: Arial, sans-serif;
-            overflow-x: hidden; /* Prohibido desbordar a los lados */
-        }
-
-        .contenedor {
-            width: 210mm;
-            padding: 20mm 15mm;
-        }
-
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            text-align: center;
-            border-bottom: 3px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-
-        .item {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 10px 0;
-            border-bottom: 1px dashed #999;
-            color: #000;
-            /* 2. ANTI-ZOOM: Obligamos a romper la palabra antes que ensanchar la hoja */
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-            white-space: normal;
+        .ticket-edge {
+            background-image: radial-gradient(circle at 10px -5px, transparent 12px, white 13px);
+            background-size: 20px 20px;
         }
     </style>
 </head>
-<body>
-    <div class="contenedor">
-        <h1>RETIROS SAN JOSÉ</h1>
-        <div id="render"></div>
+<body class="bg-zinc-900 p-2 sm:p-6 font-sans">
+    
+    <div class="max-w-md mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden">
+        <div class="bg-black p-8 text-center">
+            <div class="inline-block bg-yellow-400 text-black text-[10px] font-black px-2 py-0.5 rounded mb-2">SISTEMA DE DEPÓSITO</div>
+            <h1 class="text-white text-3xl font-black tracking-tighter uppercase leading-none">RETIROS<br>SAN JOSÉ</h1>
+            <div class="h-1 w-12 bg-yellow-400 mx-auto mt-4"></div>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-4">
+            {{replace(86.text; "###"; "</div><div class='flex flex-col p-4 bg-zinc-50 border-l-8 border-black rounded-xl shadow-sm'><span class='text-zinc-400 text-[10px] uppercase font-bold mb-1'>Artículo / Cantidad</span><span class='text-zinc-900 font-extrabold text-lg leading-tight'>")}}
+        </div>
+
+        <div class="bg-zinc-50 p-6 border-t border-dashed border-zinc-200">
+            <div class="text-center">
+                <p class="text-zinc-400 text-[10px] font-bold uppercase tracking-widest">LG Amoblamientos - Automatización</p>
+                <p class="text-zinc-300 text-[9px] mt-1 italic">La información se actualiza automáticamente</p>
+            </div>
+        </div>
     </div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        let rawData = params.get('data') || "";
-        
-        // 3. LA ASPIRADORA DE DATOS
-        // Destruimos la basura de formato que inyecta Make por los saltos de línea
-        let cleanData = decodeURIComponent(rawData)
-            .replace(/"/g, '')     // Fuera comillas
-            .replace(/\n/g, ' ')   // Convierte saltos de linea reales en espacios
-            .replace(/\r/g, '')    // Fuera retornos de carro
-            .replace(/ +/g, ' ');  // Unifica espacios dobles
-            
-        const container = document.getElementById('render');
-        const items = cleanData.split('|');
-        
-        items.forEach(item => {
-            let textoLimpio = item.trim();
-            
-            // Si Make dejó una coma huérfana al principio, la borramos
-            if (textoLimpio.startsWith(',')) {
-                textoLimpio = textoLimpio.substring(1).trim();
-            }
-
-            if (textoLimpio.length > 2) {
-                const div = document.createElement('div');
-                div.className = 'item';
-                div.textContent = textoLimpio;
-                container.appendChild(div);
-            }
-        });
-    </script>
 </body>
 </html>
